@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier; do not edit by hand.
+_commit: v0.3.0
+_src_path: gh:s-kroonen/dev-standard
+bug_level: agentic
+description: DMX lighting controller with 3D room mapping, safety zones and a show
+    and animation engine.
+feature_level: ai-assist
+github_agent: false
+issue_key: DMX
+network_api: true
+owner: s-kroonen
+platform: github
+project_name: DMX Studio
+project_slug: dmx-studio
+release_level: agentic
+safety_critical: true
+speckit_version: 1.4.4
+stack: none
+tracker: todo
+update_level: ai-assist
+use_speckit: true

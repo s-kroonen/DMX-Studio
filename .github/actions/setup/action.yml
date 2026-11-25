@@ -1,0 +1,9 @@
+# Toolchain and dependencies for scripts/check, for the stack in .copier-answers.yml (none).
+# Actions are pinned to a commit SHA (version in the comment); Dependabot proposes updates.
+name: setup
+description: Toolchain and dependencies for scripts/check
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: echo "Day 0 - no stack yet; nothing to install."
