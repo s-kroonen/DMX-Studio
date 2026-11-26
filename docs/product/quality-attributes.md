@@ -11,7 +11,7 @@ decision cites them by ID. Sources: [vision](vision.md), the
 | ID | Attribute | Target (measurable) | Source | Status |
 |---|---|---|---|---|
 | QA-1 | Timing / real-time | DMX output at up to 44 updates per second, the rate a setting; the output lowers its rate when the interface cannot keep up; change on screen to light within 50 ms at the configured rate | owner 2026-11-26; vision "Success" | 50 ms proposed, not measured |
-| QA-2 | Safety | Every value sent to hardware passes the limit and safety-zone check in one place on the output side; on an error, a lost connection or a stopped process the output goes to blackout within [NEEDS CLARIFICATION: reaction time, e.g. ≤ 100 ms]; 0 beams into a zone in safety tests | constitution VII; problem.md | reaction time open |
+| QA-2 | Safety | Every value sent to hardware passes the limit and safety-zone check in one place on the output side; on an error, a lost connection or a stopped process the output goes to blackout within 1 s (ASR-11); 0 beams into a zone in safety tests | constitution VII; problem.md; owner 2026-11-26 | |
 | QA-3 | Platforms | Host: Windows [NEEDS CLARIFICATION: 10 and 11?] at the venue, Linux (Fedora) for development; browser client on current Chromium and Firefox; Android app later; no iOS | owner answers in intake.md | Windows versions open |
 | QA-4 | Hardware interfaces | DMX4ALL command protocol over USB virtual COM port (FTDI, 38400 baud on the Mini-USB): acknowledged block writes, blackout release on connect, read-back; Mini-USB first, NanoDMX as replacement; one process holds the port | research.md; v1 `docs/DMX4ALL_PROTOCOL.md` | measured partly in v1 |
 | QA-5 | Offline / network | Runs a full event without internet; every asset ships with the app; the network is the local network only | vision | |
@@ -38,24 +38,25 @@ first working build (`docs/process/stack-layer.md`, step 14), and cited by decis
 | ASR-8 | The app starts and runs a show with no network connection at all | QA-5 | vision | not yet | `E2E_CMD` |
 | ASR-9 | A Windows installer and a portable build come from the same release; the portable build runs without admin rights | QA-6 | owner 2026-11-26 | not yet | `BUILD_CMD` |
 | ASR-10 | Every part of the code (host, browser client, later Android) runs the format, lint, type, test and coverage gates in `scripts/check` | QA-9 | constitution III; vision | not yet | `scripts/check all` |
+| ASR-11 | A supervisor process, separate from the main process, watches it; when the main process stops or stops answering, the supervisor opens the interface and sends blackout within the QA-2 reaction time. The interface holds its last values, so the main process alone cannot meet ASR-4 | QA-2 | [stack-output-engine-safety.md](../research/stack-output-engine-safety.md); owner 2026-11-26 | not yet | `scripts/check safety` |
 
 ## Concerns
 
 | ID | Concern | Drivers | Reversibility | Needs a spike? | Research note | Spike |
 |---|---|---|---|---|---|---|
-| C-1 | Output to the DMX4ALL interface over USB serial: throughput, latency, rate control, port ownership on Windows and Linux | QA-1, QA-4, ASR-1, ASR-2 | two-way (behind an output boundary) | yes: measure the Mini-USB | `docs/research/stack-dmx-output.md` | `spike/DMX-?-dongle-throughput` |
-| C-2 | Show engine: the update loop, merging live control, cues, effects and sound into one output frame, timing and jitter | QA-1, QA-8, ASR-1, ASR-7 | one-way (core language) | no | `docs/research/stack-show-engine.md` | |
-| C-3 | Safety enforcement: one check on the output side, safe state on failure, testability of safety rules | QA-2, ASR-3, ASR-4 | one-way (architecture) | no | `docs/research/stack-safety.md` | |
-| C-4 | Desktop UI toolkit for the host on Windows and Linux: many control windows, keyboard shortcuts, UI levels | QA-3, QA-9, ASR-5 | one-way | no | `docs/research/stack-desktop-ui.md` | |
-| C-5 | 3D room view and aiming in that toolkit: room shape, fixtures, beams, picking a point | QA-3, QA-8 | one-way | yes: 3D view in the leading toolkit | `docs/research/stack-3d-view.md` | `spike/DMX-?-3d-view` |
-| C-6 | Remote clients: browser client served by the host, later the Android app, sharing code with the host in one repository | QA-3, QA-9, ASR-5 | one-way | maybe: after C-4 | `docs/research/stack-remote-clients.md` | |
-| C-7 | Control surface: local API with an OpenAPI description, live updates to clients, pairing and authentication, origin checks, a host-only MCP server | QA-7, ASR-6 | two-way (protocol), one-way (language libraries) | no | `docs/research/stack-control-surface.md` | |
-| C-8 | Audio capture and analysis: input devices and loopback on Windows and Linux, band levels, beat and BPM detection, latency | QA-1, QA-3 | two-way (behind an audio boundary) | yes: loopback on both systems | `docs/research/stack-audio.md` | `spike/DMX-?-audio-loopback` |
-| C-9 | Venue storage: a human-readable, versioned file for room, fixtures, profiles, groups and shows; export and import; migrations | QA-9 | two-way (with migrations) | no | `docs/research/stack-storage.md` | |
-| C-10 | Maths: aiming (pan/tilt from a 3D point) and the calibration solver (non-linear least squares) | QA-2, QA-8 | two-way | no | `docs/research/stack-maths.md` | |
-| C-11 | Packaging and release: Windows installer and portable build, Linux package, Android app later, from one release | QA-6, ASR-9 | two-way | no | `docs/research/stack-packaging.md` | |
-| C-12 | Toolability: dev-standard profiles and gates for the candidate languages (format, lint, types, tests, coverage, SAST rules, quality canary) | QA-9, ASR-10 | one-way | no | `docs/research/stack-toolability.md` | |
-| C-13 | Later slices that depend on libraries: embedded scripting, MIDI, OSC, Ableton Link (licence), Android USB host | QA-9 | two-way if kept behind boundaries | no (checked per slice) | `docs/research/stack-later-integrations.md` | |
+| C-1 | Output to the DMX4ALL interface over USB serial: throughput, latency, rate control, port ownership on Windows and Linux | QA-1, QA-4, ASR-1, ASR-2 | two-way (behind an output boundary) | yes: measure the Mini-USB | [stack-output-engine-safety.md](../research/stack-output-engine-safety.md) | `spike/DMX-?-dongle-throughput` |
+| C-2 | Show engine: the update loop, merging live control, cues, effects and sound into one output frame, timing and jitter | QA-1, QA-8, ASR-1, ASR-7 | one-way (core language) | no | [stack-output-engine-safety.md](../research/stack-output-engine-safety.md) | |
+| C-3 | Safety enforcement: one check on the output side, safe state on failure, testability of safety rules | QA-2, ASR-3, ASR-4 | one-way (architecture) | no | [stack-output-engine-safety.md](../research/stack-output-engine-safety.md) | |
+| C-4 | Desktop UI toolkit for the host on Windows and Linux: many control windows, keyboard shortcuts, UI levels | QA-3, QA-9, ASR-5 | one-way | no | [stack-ui.md](../research/stack-ui.md) | |
+| C-5 | 3D room view and aiming in that toolkit: room shape, fixtures, beams, picking a point | QA-3, QA-8 | one-way | yes: 3D view in the leading toolkit | [stack-ui.md](../research/stack-ui.md) | `spike/DMX-?-3d-view` |
+| C-6 | Remote clients: browser client served by the host, later the Android app, sharing code with the host in one repository | QA-3, QA-9, ASR-5 | one-way | maybe: after C-4 | [stack-ui.md](../research/stack-ui.md) | |
+| C-7 | Control surface: local API with an OpenAPI description, live updates to clients, pairing and authentication, origin checks, a host-only MCP server | QA-7, ASR-6 | two-way (protocol), one-way (language libraries) | no | [stack-api-storage-libraries.md](../research/stack-api-storage-libraries.md) | |
+| C-8 | Audio capture and analysis: input devices and loopback on Windows and Linux, band levels, beat and BPM detection, latency | QA-1, QA-3 | two-way (behind an audio boundary) | yes: loopback on both systems | [stack-audio.md](../research/stack-audio.md) | `spike/DMX-?-audio-loopback` |
+| C-9 | Venue storage: a human-readable, versioned file for room, fixtures, profiles, groups and shows; export and import; migrations | QA-9 | two-way (with migrations) | no | [stack-api-storage-libraries.md](../research/stack-api-storage-libraries.md) | |
+| C-10 | Maths: aiming (pan/tilt from a 3D point) and the calibration solver (non-linear least squares) | QA-2, QA-8 | two-way | no | [stack-api-storage-libraries.md](../research/stack-api-storage-libraries.md) | |
+| C-11 | Packaging and release: Windows installer and portable build, Linux package, Android app later, from one release | QA-6, ASR-9 | two-way | no | [stack-api-storage-libraries.md](../research/stack-api-storage-libraries.md) | |
+| C-12 | Toolability: dev-standard profiles and gates for the candidate languages (format, lint, types, tests, coverage, SAST rules, quality canary) | QA-9, ASR-10 | one-way | no | [stack-toolability.md](../research/stack-toolability.md) | |
+| C-13 | Later slices that depend on libraries: embedded scripting, MIDI, OSC, Ableton Link (licence), Android USB host | QA-9 | two-way if kept behind boundaries | no (checked per slice) | [stack-api-storage-libraries.md](../research/stack-api-storage-libraries.md) | |
 
 ## Previous version per concern
 
