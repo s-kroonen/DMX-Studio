@@ -54,6 +54,9 @@ in the profile to check during calibration.
 
 No garbage collection ran; the loop allocates little, so this is optimistic for an engine.
 
+Visual sweep from .NET, Moving Head 1, 44 Hz, 16-bit pan, green: smooth, no visible difference from
+the Rust sweep (owner, 2026-11-26). Write + ack median 6.4 ms, max 11.8 ms (Rust: 5.6 ms, max 6.4 ms).
+
 ## Open
 
 - Windows: the same runs, with the FTDI latency timer at 16 ms and 1 ms (Device Manager, port
