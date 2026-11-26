@@ -10,8 +10,8 @@ removes it.
 | ID | Type | Title | Status | Level | Time-box | Notes |
 |----|------|-------|--------|-------|----------|-------|
 | DMX-1 | chore | Set up the repository from dev-standard | done | ai-assist | | day 0 |
-| DMX-2 | chore | Write the product vision (`docs/product/vision.md`) | todo | ai-assist | | |
-| DMX-3 | chore | Assess the idea (`/speckit-assess-*`) and research the options | todo | ai-assist | | before the stack |
+| DMX-2 | chore | Write the product vision (`docs/product/vision.md`) | done | ai-assist | | |
+| DMX-3 | chore | Assess the idea (`/speckit-assess-*`) and research the options | done | ai-assist | | before the stack |
 | DMX-4 | chore | Decide the stack (`docs/decisions/0002-choose-the-stack.md`) | todo | ai-assist | | then add the stack layer |
 | DMX-5 | chore | Add the stack layer (`docs/process/stack-layer.md`, skill `/stack-layer`) | todo | ai-assist | | after DMX-4 is accepted; again when the code grows |
 | DMX-6 | chore | Review the research after the first working build (playbook step 14) | todo | ai-assist | | update the ASRs, retrospective for a remake, concerns that came up, stale notes |

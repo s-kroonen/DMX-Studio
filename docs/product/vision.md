@@ -8,8 +8,10 @@ page as a list of features that proved useful and as a source of hardware facts.
 structure, file formats and API are not carried over: the stack decision (DMX-4) starts from the
 requirements below, not from the code.
 
-The idea assessment (DMX-3, `.specify/assessments/<slug>/`) holds the full problem, concept and
-decision. This page is the one-page summary; it links there once the assessment exists.
+The [idea assessment](../../.specify/assessments/dmx-studio/decision.md) (DMX-3) holds the
+evidence, the problem definition, the options and the verdict: **go**, rebuilding in vertical
+slices, with the earlier controller in use until the first release replaces it. This page is the
+one-page summary.
 
 ## Problem
 
@@ -20,7 +22,8 @@ Professional consoles solve show building with presets, cues and effects, but co
 training; music-driven tools are quick but shallow. DMX Studio describes the room in 3D and aims
 fixtures at points in it. It blocks beams from no-go zones before any value reaches the hardware.
 Live control, cues, effects and sound-to-light run from one place, at the depth the operator
-chooses, from a laptop or a phone.
+chooses, from a laptop or a phone. Full statement:
+[problem definition](../../.specify/assessments/dmx-studio/problem.md).
 
 ## Users
 
@@ -56,7 +59,7 @@ technology, a file format or an architecture.
 
 | Area | Capability | Origin |
 |---|---|---|
-| DMX output | One universe through the DMX4ALL Mini-USB interface; a simulated output for work without hardware; switch without a restart; blackout | E |
+| DMX output | One universe through an interface that speaks the DMX4ALL command protocol (the Mini-USB first, the NanoDMX as replacement); a simulated output for work without hardware; switch without a restart; blackout | E |
 | Fixtures | Fixture profiles (channel map, pan/tilt range, fine channels, named ranges, per-role value ranges); bundled profiles for the fixtures in use; patching | E |
 | Live control | Colour, dimmer, strobe/shutter, pan/tilt and custom channels for a fixture, a selection or a group, all at the same time | E |
 | Groups | Named groups, including a built-in group of all lights | E |
@@ -76,7 +79,6 @@ technology, a file format or an architecture.
 | Multi-zone fixtures | Light bars: zones with their own colour, dimmer and strobe; zone chases | E |
 | Calibration | Aim all heads at one point to compare, offset trims, solving a head's mounting and position from recorded marks | E |
 | Fixture library | A library of fixture types; import from other programs' files (for example QLC+ `.qxf`); a fixture editor | E, + |
-| RDM | Discover fixtures and read or set their address over the DMX line | + |
 | Working speed | Undo and redo; common keyboard shortcuts; a shortcut editor | + |
 | UI levels | Basic, standard and advanced levels (see Familiarity) | + |
 | Mobile app | A native Android app as the main phone client, with the browser client as fallback | + |
@@ -84,6 +86,7 @@ technology, a file format or an architecture.
 | Developer API | A documented API with an OpenAPI page; scripts outside the app use it | + |
 | Scripting | Scripts inside the app for timing-critical work such as advanced animations | + |
 | Agent support | A local MCP server so an AI agent can help with setup and debugging | + |
+| Tempo sync | Tempo and beat sync with other apps through Ableton Link; its GPLv2+ licence is settled before building | + |
 | Room objects | Reference objects (walls, people, boxes, platforms) and named saved rooms | E |
 
 ### Nice to have
@@ -92,7 +95,6 @@ technology, a file format or an architecture.
 |---|---|
 | MIDI controllers (faders, pads) with MIDI learn | + |
 | OSC input for show and VJ software and tablet control surfaces | + |
-| Tempo and beat sync with other apps through Ableton Link | + |
 | A timeline that places cues and effects against a music track (scope to be discussed) | + |
 | Gyroscope aiming from the phone | + |
 | The phone as a calibration and position-measuring tool | + |
@@ -107,13 +109,15 @@ technology, a file format or an architecture.
 - Lasers, with laser-specific safety rules. No laser hardware is available yet; safety zones
   already cover moving heads.
 - AR room setup.
+- RDM: discover fixtures and read or set their address over the DMX line. No DMX4ALL USB
+  interface offers RDM; it waits for RDM-capable hardware.
 
 ### Out
 
 A later decision record can move an item back in.
 
-- More than one universe, network DMX (Art-Net, sACN) and other output interfaces. The single
-  dongle covers the venues in use.
+- More than one universe, network DMX (Art-Net, sACN) and interfaces outside the DMX4ALL command
+  protocol. One universe covers the venues in use.
 - Network smart lights such as Home Assistant RGB bulbs: too slow for show control.
 - iOS clients.
 - User accounts and roles. The host setting and the control-only rule above limit remote access.
@@ -121,7 +125,8 @@ A later decision record can move an item back in.
 
 ## Success
 
-Targets to confirm in the assessment:
+Targets carried from the [problem definition](../../.specify/assessments/dmx-studio/problem.md);
+the aim, setup and latency numbers are proposals until measured:
 
 - Zero beams into a safety zone: every safety test passes, in edit mode, show mode, cues, effects,
   animations, sound-to-light and scripts.
@@ -151,23 +156,26 @@ Targets to confirm in the assessment:
 - **One repository.** The host app, the browser client and the Android app live in this
   repository and share the gates.
 - **Hardware.** The DMX4ALL Mini-USB interface (FTDI serial, 38400 baud) is the only verified
-  output. Firmware V3.36 ignores the fast single-channel writes, can start in blackout, and has a
-  pinout setting (International or Martin) that keeps fixtures dark when wrong. Only one process
-  can hold the port. RDM support of this interface is unknown; the phone as USB host is unverified.
-- **Licences.** Some protocol SDKs, such as Ableton Link, carry copyleft licences; research checks
-  them against the licence gate (`scripts/check licenses`).
+  output, and DMX4ALL has discontinued it. DMX Studio targets the DMX4ALL command protocol, which
+  the current NanoDMX also speaks; differences of the Mini-USB are handled where found. Firmware
+  V3.36 ignores the fast single-channel writes, can start in blackout, and has a pinout setting
+  (International or Martin) that keeps fixtures dark when wrong. Only one process can hold the
+  port. The phone as USB host is unverified (the Android FTDI driver needs the dongle's PID C850
+  added).
+- **Licences.** Ableton Link is GPLv2+ or proprietary on request; the licence gate
+  (`scripts/check licenses`) fails on GPL dependencies, so the licence route is decided before
+  Link is built.
 - **Offline.** No internet at the venue: every asset ships with the app.
 - **Team.** One maintainer, hobby budget. Features land in small steps through the spec-driven
   workflow in `AGENTS.md`.
 
-## Open questions for the assessment
+## Open questions
 
-- Timeline: a full editor against a track, or cue timing only?
-- Show preparation from music: generated automatically, assisted, or authored by hand with a preview?
-- Embedded scripting: which language, and what a script may touch (the safety check always applies).
-- Fixture import: which formats besides QLC+ (for example GDTF), and which programs' files.
-- RDM: which interface supports it, and is a second interface acceptable for it?
-- Android as USB host for the FTDI interface: feasible on common phones?
+The [decision](../../.specify/assessments/dmx-studio/decision.md) carries them forward. For the
+stack decision (DMX-4): one stack for a Windows and Linux host, the browser client and later
+Android with all gates; latency of the DMX4ALL interface at show load. For later slices: timeline
+scope, show preparation from music, the scripting language, import formats (for example GDTF),
+concepts per familiarity level, Android as USB host.
 
 ## Sources in the earlier controller
 
