@@ -1,0 +1,554 @@
+{
+  "version": 1,
+  "room": {
+    "name": "Papa kamer",
+    "dimensions": {
+      "width": 2.6,
+      "depth": 3.5,
+      "height": 2
+    },
+    "floor_points": [
+      {
+        "x": -1.3,
+        "y": 1.75
+      },
+      {
+        "x": -1.3,
+        "y": -1
+      },
+      {
+        "x": 0.3,
+        "y": -1
+      },
+      {
+        "x": 0.3,
+        "y": -1.75
+      },
+      {
+        "x": 1.3,
+        "y": -1.75
+      },
+      {
+        "x": 1.3,
+        "y": 1.75
+      }
+    ],
+    "fixtures": [
+      {
+        "id": "fx-7bfa7442",
+        "name": "Beamz",
+        "profile_id": "beamz-mhl108-mkii-11ch",
+        "universe": 1,
+        "start_address": 29,
+        "position": {
+          "x": -0.96,
+          "y": 1.122,
+          "z": 0.464
+        },
+        "orientation": {
+          "yaw_deg": 0,
+          "pitch_deg": 180,
+          "roll_deg": 0
+        },
+        "group_ids": [],
+        "inverted_pan": false,
+        "inverted_tilt": false,
+        "pan_offset_deg": 0,
+        "tilt_offset_deg": 0
+      },
+      {
+        "id": "fx-0dbdb872",
+        "name": "Moving Head 1",
+        "profile_id": "generic-rgbw-moving-head-14ch",
+        "universe": 1,
+        "start_address": 1,
+        "position": {
+          "x": 0.981,
+          "y": 0.239,
+          "z": 0.334
+        },
+        "orientation": {
+          "yaw_deg": 0,
+          "pitch_deg": 180,
+          "roll_deg": 0
+        },
+        "group_ids": [],
+        "inverted_pan": false,
+        "inverted_tilt": false,
+        "pan_offset_deg": 0,
+        "tilt_offset_deg": 0
+      },
+      {
+        "id": "fx-8a77b837",
+        "name": "Moving Head 2",
+        "profile_id": "generic-rgbw-moving-head-14ch",
+        "universe": 1,
+        "start_address": 15,
+        "position": {
+          "x": -0.922,
+          "y": 0.514,
+          "z": 0.161
+        },
+        "orientation": {
+          "yaw_deg": 0,
+          "pitch_deg": 180,
+          "roll_deg": 0
+        },
+        "group_ids": [],
+        "inverted_pan": false,
+        "inverted_tilt": false,
+        "pan_offset_deg": 0,
+        "tilt_offset_deg": 0
+      }
+    ],
+    "safety_zones": [],
+    "objects": [],
+    "animation_points": []
+  },
+  "groups": [
+    {
+      "id": "all",
+      "name": "All lights",
+      "fixture_ids": [
+        "fx-7bfa7442",
+        "fx-0dbdb872",
+        "fx-8a77b837"
+      ],
+      "color": "#ff0000"
+    }
+  ],
+  "animations": [],
+  "patterns": [],
+  "audio": {
+    "device": null,
+    "gain": 1,
+    "sensitivity": 1,
+    "beat_source": "audio",
+    "tap_bpm": 0,
+    "sound_mode": "off",
+    "functions": []
+  },
+  "fixture_profiles": [
+    {
+      "id": "beamz-mhl108-mkii-11ch",
+      "name": "Beamz MHL108 MKII",
+      "manufacturer": "Beamz",
+      "mode": "11ch",
+      "channel_count": 11,
+      "channels": {
+        "pan": 1,
+        "pan_fine": 2,
+        "tilt": 3,
+        "tilt_fine": 4,
+        "dimmer": 5,
+        "red": 6,
+        "green": 7,
+        "blue": 8,
+        "macro": 9,
+        "strobe": 10,
+        "mode": 11
+      },
+      "custom_channels": [],
+      "pan_range_deg": 540,
+      "tilt_range_deg": 180,
+      "defaults": {
+        "macro": 0,
+        "mode": 0,
+        "strobe": 0
+      },
+      "fixture_type": "moving_head",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "cheap-par-shared-dimmer-strobe-4ch",
+      "name": "Cheap RGB PAR (shared Dimmer/Strobe, 4ch)",
+      "manufacturer": "Generic",
+      "mode": "4ch",
+      "channel_count": 4,
+      "channels": {
+        "dimmer": 1,
+        "strobe": 1,
+        "red": 2,
+        "green": 3,
+        "blue": 4
+      },
+      "custom_channels": [],
+      "pan_range_deg": null,
+      "tilt_range_deg": null,
+      "defaults": {
+        "dimmer": 200
+      },
+      "fixture_type": "par",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "eurolite-kls-120-fx-21ch",
+      "name": "Eurolite LED KLS-120 FX (21ch)",
+      "manufacturer": "Eurolite",
+      "mode": "21ch",
+      "channel_count": 21,
+      "channels": {
+        "dimmer": 1
+      },
+      "custom_channels": [
+        {
+          "channel": 20,
+          "label": "Derby Motor",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": [
+            {
+              "label": "Off",
+              "min": 0,
+              "max": 9,
+              "speed": false
+            },
+            {
+              "label": "Low",
+              "min": 10,
+              "max": 29,
+              "speed": false
+            },
+            {
+              "label": "Medium",
+              "min": 30,
+              "max": 49,
+              "speed": false
+            },
+            {
+              "label": "Fast",
+              "min": 50,
+              "max": 255,
+              "speed": false
+            }
+          ]
+        },
+        {
+          "channel": 21,
+          "label": "Built-in Program (overrides colors)",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": [
+            {
+              "label": "Off",
+              "min": 0,
+              "max": 9,
+              "speed": false
+            },
+            {
+              "label": "Auto 1",
+              "min": 10,
+              "max": 49,
+              "speed": false
+            },
+            {
+              "label": "Auto 2",
+              "min": 50,
+              "max": 89,
+              "speed": false
+            },
+            {
+              "label": "Auto 3",
+              "min": 90,
+              "max": 129,
+              "speed": false
+            },
+            {
+              "label": "Sound 1",
+              "min": 130,
+              "max": 169,
+              "speed": false
+            },
+            {
+              "label": "Sound 2",
+              "min": 170,
+              "max": 209,
+              "speed": false
+            },
+            {
+              "label": "Sound 3",
+              "min": 210,
+              "max": 255,
+              "speed": false
+            }
+          ]
+        }
+      ],
+      "pan_range_deg": null,
+      "tilt_range_deg": null,
+      "defaults": {
+        "dimmer": 255
+      },
+      "fixture_type": "light_bar",
+      "role_ranges": {
+        "strobe": {
+          "min": 10,
+          "max": 255,
+          "zero": 0
+        }
+      },
+      "customized": false,
+      "zones": [
+        {
+          "id": "derby1",
+          "label": "Derby 1",
+          "kind": "derby",
+          "channels": {
+            "red": 12,
+            "green": 13,
+            "blue": 14,
+            "white": 15,
+            "strobe": 11
+          },
+          "position": -1
+        },
+        {
+          "id": "spot1",
+          "label": "Spot 1",
+          "kind": "spot",
+          "channels": {
+            "red": 3,
+            "green": 4,
+            "blue": 5,
+            "white": 6,
+            "strobe": 2
+          },
+          "position": -0.34
+        },
+        {
+          "id": "spot2",
+          "label": "Spot 2",
+          "kind": "spot",
+          "channels": {
+            "red": 7,
+            "green": 8,
+            "blue": 9,
+            "white": 10,
+            "strobe": 2
+          },
+          "position": 0.34
+        },
+        {
+          "id": "derby2",
+          "label": "Derby 2",
+          "kind": "derby",
+          "channels": {
+            "red": 16,
+            "green": 17,
+            "blue": 18,
+            "white": 19,
+            "strobe": 11
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "id": "generic-laser-8ch",
+      "name": "Generic DMX Laser (8ch)",
+      "manufacturer": "Generic",
+      "mode": "8ch",
+      "channel_count": 8,
+      "channels": {
+        "mode": 1,
+        "pan": 2,
+        "tilt": 3,
+        "color_wheel": 4,
+        "gobo_wheel": 5,
+        "zoom": 6,
+        "strobe": 7,
+        "dimmer": 8
+      },
+      "custom_channels": [
+        {
+          "channel": 1,
+          "label": "Pattern/Mode",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        }
+      ],
+      "pan_range_deg": 180,
+      "tilt_range_deg": 90,
+      "defaults": {
+        "mode": 0,
+        "strobe": 0,
+        "dimmer": 255
+      },
+      "fixture_type": "laser",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "generic-moving-head-16ch",
+      "name": "Generic Moving Head (16ch)",
+      "manufacturer": "Generic",
+      "mode": "16ch",
+      "channel_count": 16,
+      "channels": {
+        "pan": 1,
+        "pan_fine": 2,
+        "tilt": 3,
+        "tilt_fine": 4,
+        "color_wheel": 5,
+        "gobo_wheel": 6,
+        "gobo_rotation": 7,
+        "prism": 8,
+        "focus": 9,
+        "zoom": 10,
+        "shutter": 11,
+        "dimmer": 12,
+        "red": 13,
+        "green": 14,
+        "blue": 15,
+        "mode": 16
+      },
+      "custom_channels": [],
+      "pan_range_deg": 540,
+      "tilt_range_deg": 270,
+      "defaults": {
+        "shutter": 255,
+        "dimmer": 0,
+        "mode": 0
+      },
+      "fixture_type": "moving_head",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "generic-par-rgb-4ch",
+      "name": "Generic RGB PAR (4ch)",
+      "manufacturer": "Generic",
+      "mode": "4ch",
+      "channel_count": 4,
+      "channels": {
+        "dimmer": 1,
+        "red": 2,
+        "green": 3,
+        "blue": 4
+      },
+      "custom_channels": [],
+      "pan_range_deg": null,
+      "tilt_range_deg": null,
+      "defaults": {
+        "dimmer": 255
+      },
+      "fixture_type": "par",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "generic-rgbw-moving-head-14ch",
+      "name": "Generic RGBW Moving Head (14ch)",
+      "manufacturer": "Generic",
+      "mode": "14ch",
+      "channel_count": 14,
+      "channels": {
+        "pan": 1,
+        "pan_fine": 2,
+        "tilt": 3,
+        "tilt_fine": 4,
+        "dimmer": 6,
+        "strobe": 6,
+        "red": 7,
+        "green": 8,
+        "blue": 9,
+        "white": 10,
+        "macro": 11
+      },
+      "custom_channels": [
+        {
+          "channel": 5,
+          "label": "Pan/Tilt Speed",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        },
+        {
+          "channel": 12,
+          "label": "Color Macro Speed",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        },
+        {
+          "channel": 13,
+          "label": "Function/Macro (0-7 off, 8-127 Auto1-8, 128-255 Sound1-8)",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        },
+        {
+          "channel": 14,
+          "label": "RESET (150+ resets the fixture - keep at 0)",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        }
+      ],
+      "pan_range_deg": 540,
+      "tilt_range_deg": 270,
+      "defaults": {
+        "dimmer": 255
+      },
+      "fixture_type": "moving_head",
+      "role_ranges": {
+        "dimmer": {
+          "min": 10,
+          "max": 134,
+          "zero": 0
+        },
+        "strobe": {
+          "min": 135,
+          "max": 239,
+          "zero": 240
+        }
+      },
+      "customized": false,
+      "zones": []
+    },
+    {
+      "id": "generic-smoke-machine-2ch",
+      "name": "Generic Smoke Machine (2ch)",
+      "manufacturer": "Generic",
+      "mode": "2ch",
+      "channel_count": 2,
+      "channels": {
+        "dimmer": 1
+      },
+      "custom_channels": [
+        {
+          "channel": 2,
+          "label": "Fan Speed",
+          "default": 0,
+          "min_value": 0,
+          "max_value": 255,
+          "ranges": []
+        }
+      ],
+      "pan_range_deg": null,
+      "tilt_range_deg": null,
+      "defaults": {
+        "dimmer": 0
+      },
+      "fixture_type": "smoke",
+      "role_ranges": {},
+      "customized": false,
+      "zones": []
+    }
+  ]
+}
