@@ -1,0 +1,12 @@
+[package]
+name = "dmx7-probe"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Spike DMX-7: throwaway code, never merged.
+[dependencies]
+serial2 = "0.2.39"
+
+[profile.release]
+debug = false
