@@ -109,6 +109,8 @@ technology, a file format or an architecture.
 - Lasers, with laser-specific safety rules. No laser hardware is available yet; safety zones
   already cover moving heads.
 - AR room setup.
+- More than one universe. The first releases drive one; the design leaves room for more
+  (`quality-attributes.md`, QA-8).
 - RDM: discover fixtures and read or set their address over the DMX line. No DMX4ALL USB
   interface offers RDM; it waits for RDM-capable hardware.
 
@@ -116,8 +118,7 @@ technology, a file format or an architecture.
 
 A later decision record can move an item back in.
 
-- More than one universe, network DMX (Art-Net, sACN) and interfaces outside the DMX4ALL command
-  protocol. One universe covers the venues in use.
+- Network DMX (Art-Net, sACN) and interfaces outside the DMX4ALL command protocol.
 - Network smart lights such as Home Assistant RGB bulbs: too slow for show control.
 - iOS clients.
 - User accounts and roles. The host setting and the control-only rule above limit remote access.
