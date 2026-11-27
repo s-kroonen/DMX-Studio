@@ -39,7 +39,7 @@ public sealed class MainView : DockPanel
         var stats = new TextBlock { Margin = new Thickness(8, 4) };
         var help = new TextBlock { Margin = new Thickness(8, 0, 8, 4), Text = "drag to orbit, wheel to zoom, click on the floor or a wall to aim the selected fixtures" };
         Action<string> setStats = s => stats.Text = s, setHelp = s => help.Text = s;
-        var room = ViewFactory?.Invoke(setStats, setHelp) ?? new RoomControl(setStats, setHelp);
+        var room = ViewFactory?.Invoke(setStats, setHelp) ?? new RoomControl(setStats, setHelp).InInputHost();
         SetDock(stats, Dock.Top);
         SetDock(help, Dock.Top);
         Children.Add(stats);
@@ -67,6 +67,19 @@ public sealed unsafe class RoomControl : OpenGlControlBase
     private double _lastFrame, _windowStart, _logStart;
     private readonly List<double> _frameMs = new(), _buildMs = new(), _logFrames = new(), _logBuild = new();
     private string _info = "";
+
+    /// The GL output is a composition visual that pointer hit tests skip, so a transparent
+    /// panel around the control takes the input.
+    public Panel InInputHost()
+    {
+        var host = new Panel { Background = Avalonia.Media.Brushes.Transparent };
+        host.Children.Add(this);
+        host.PointerPressed += Pressed;
+        host.PointerMoved += Moved;
+        host.PointerReleased += Released;
+        host.PointerWheelChanged += Wheel;
+        return host;
+    }
 
     public RoomControl(Action<string> stats, Action<string> help)
     {
@@ -193,14 +206,14 @@ public sealed unsafe class RoomControl : OpenGlControlBase
         }
     }
 
-    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    private void Pressed(object? sender, PointerPressedEventArgs e)
     {
         _down = _last = e.GetPosition(this);
         _dragging = true;
-        e.Pointer.Capture(this);
+        e.Pointer.Capture(sender as IInputElement);
     }
 
-    protected override void OnPointerMoved(PointerEventArgs e)
+    private void Moved(object? sender, PointerEventArgs e)
     {
         if (!_dragging) return;
         var p = e.GetPosition(this);
@@ -209,7 +222,7 @@ public sealed unsafe class RoomControl : OpenGlControlBase
         _last = p;
     }
 
-    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    private void Released(object? sender, PointerReleasedEventArgs e)
     {
         _dragging = false;
         e.Pointer.Capture(null);
@@ -225,6 +238,6 @@ public sealed unsafe class RoomControl : OpenGlControlBase
         }
     }
 
-    protected override void OnPointerWheelChanged(PointerWheelEventArgs e) =>
+    private void Wheel(object? sender, PointerWheelEventArgs e) =>
         _cam.Dist = Math.Clamp(_cam.Dist * (1 - (float)e.Delta.Y * 0.1f), 3f, 30f);
 }

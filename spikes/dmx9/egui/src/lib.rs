@@ -228,7 +228,7 @@ impl eframe::App for RoomApp {
                 callback: Arc::new(egui_glow::CallbackFn::new(move |info, painter| {
                     use glow::HasContext as _;
                     // Keep the clear inside the view, so the labels above it stay.
-                    let clip = info.clip_rect_in_pixels();
+                    let clip = info.viewport_in_pixels();
                     unsafe {
                         painter.gl().enable(glow::SCISSOR_TEST);
                         painter.gl().scissor(clip.left_px, clip.from_bottom_px, clip.width_px, clip.height_px);

@@ -2,7 +2,7 @@
 // in C# (WebRoom.cs) and arrives as a float32 vertex buffer each frame. Throwaway code.
 
 let gl, program, vao, vbo, mvpLoc, canvas, tick;
-let dx = 0, dy = 0, wheel = 0, clickX = -1, clickY = -1, down = null, last = null;
+let dx = 0, dy = 0, wheel = 0, clickX = -1, clickY = -1;
 
 const vs = `#version 300 es
 layout(location = 0) in vec3 a_pos;
@@ -42,15 +42,14 @@ export function start(c) {
   gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 28, 12);
   gl.bindVertexArray(null);
 
-  canvas.addEventListener("pointerdown", e => { down = last = [e.offsetX, e.offsetY]; canvas.setPointerCapture(e.pointerId); });
+  // Orbit from the button state of each move: Avalonia's input layer takes some down and up
+  // events, so tracking them gives a drag with the button released.
+  let moved = 0;
   canvas.addEventListener("pointermove", e => {
-    if (!last) return;
-    dx += e.offsetX - last[0]; dy += e.offsetY - last[1]; last = [e.offsetX, e.offsetY];
+    if (e.buttons & 1) { dx += e.movementX; dy += e.movementY; moved += Math.abs(e.movementX) + Math.abs(e.movementY); }
   });
-  canvas.addEventListener("pointerup", e => {
-    if (down && Math.abs(e.offsetX - down[0]) + Math.abs(e.offsetY - down[1]) <= 4) { clickX = e.offsetX; clickY = e.offsetY; }
-    down = last = null;
-  });
+  canvas.addEventListener("pointerdown", () => { moved = 0; });
+  canvas.addEventListener("click", e => { if (moved <= 4) { clickX = e.offsetX; clickY = e.offsetY; } moved = 0; });
   canvas.addEventListener("wheel", e => { wheel += e.deltaY; e.preventDefault(); }, { passive: false });
 
   globalThis.getDotnetRuntime(0).getAssemblyExports("Browser.dll").then(exports => {
