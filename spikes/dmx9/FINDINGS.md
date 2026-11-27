@@ -6,8 +6,8 @@ surface picking on the CPU.
 
 ## Setup
 
-- Linux: Fedora Linux 44, GNOME on Wayland, monitor refresh about 165 Hz (both views are
-  vsync-capped there), Firefox for the browser runs.
+- Linux: Fedora Linux 44, GNOME on Wayland, monitor maximum 165 Hz (egui is vsync-capped
+  there), Firefox for the browser runs.
 - egui 0.37.0 with eframe and glow (OpenGL 3.3 desktop, WebGL2 browser); wasm-bindgen 0.2.130.
 - Avalonia 12.2.0 with `OpenGlControlBase` (desktop), .NET 10.0.13; browser head with
   Avalonia.Browser and the `wasm-tools` workload.
@@ -22,7 +22,9 @@ surface picking on the CPU.
 | Avalonia `OpenGlControlBase`, Firefox | no | — | — | — | — | 19.3 MB raw, 5.3 MB Brotli |
 | Avalonia with a WebGL canvas, Firefox | yes | 164 after start | 8–10 ms | 2 ms p99 | gen0 about 1 per s | as above |
 
-Both toolkits clear the target (30 fps with 50 fixtures) on the desktop and in the browser by a
+The Avalonia desktop rate (177–180 fps) is above the 165 Hz maximum of the screen:
+`OpenGlControlBase` renders into its own framebuffer and is not locked to the display, so it counts
+frames drawn, of which some are never shown. Both toolkits clear the target (30 fps with 50 fixtures) on the desktop and in the browser by a
 wide margin; the geometry rebuild of all beams costs well under 1 ms per frame natively.
 
 ## Findings
@@ -92,4 +94,5 @@ wide margin; the geometry rebuild of all beams costs well under 1 ms per frame n
 
 ## Open
 
-- Whether a frame drawn in egui is wanted on every platform, or the system frame.
+- egui window frame: drawn in egui on every platform for one look (owner, 2026-11-27); custom
+  icons later.
