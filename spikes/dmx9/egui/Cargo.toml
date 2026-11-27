@@ -13,9 +13,9 @@ eframe = { version = "=0.37.0", default-features = false, features = ["glow", "d
 log = "0.4"
 web-time = "1.1"
 
-# GNOME on Wayland leaves window frames to the app: winit's Adwaita frame instead of its plain one.
+# For `--frame system`: run through XWayland so GNOME draws its own window frame.
 [target.'cfg(target_os = "linux")'.dependencies]
-winit = { version = "=0.30.13", default-features = false, features = ["wayland", "wayland-csd-adwaita"] }
+winit = { version = "=0.30.13", default-features = false, features = ["wayland", "x11"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen-futures = "0.4"

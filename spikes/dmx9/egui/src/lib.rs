@@ -1,5 +1,6 @@
 //! Spike DMX-9: the room view in egui, drawn with glow (OpenGL 3.3 / WebGL2). Throwaway code.
 
+pub mod frame;
 pub mod scene;
 
 use eframe::egui::mutex::Mutex;
@@ -100,6 +101,8 @@ struct Frame {
 }
 
 pub struct RoomApp {
+    /// Draw the window frame in egui (`--frame custom`) instead of leaving it to the system.
+    pub custom_frame: bool,
     renderer: Arc<Mutex<Renderer>>,
     frame: Arc<Mutex<Frame>>,
     cam: Camera,
@@ -128,6 +131,7 @@ impl RoomApp {
         let gl = cc.gl.as_ref().expect("glow backend");
         let now = Instant::now();
         Self {
+            custom_frame: false,
             renderer: Arc::new(Mutex::new(Renderer::new(gl))),
             frame: Arc::new(Mutex::new(Frame { verts: Vec::new(), opaque: 0 })),
             cam: Camera::default(),
@@ -188,6 +192,10 @@ impl RoomApp {
 impl eframe::App for RoomApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.stats();
+        if self.custom_frame {
+            frame::title_bar(ui, "DMX-9 egui room view");
+            frame::resize_edges(ui);
+        }
         egui::CentralPanel::default().show(ui, |ui| {
             ui.label(format!("egui 0.37 with glow: {}", self.shown));
             ui.label(match self.aim {
