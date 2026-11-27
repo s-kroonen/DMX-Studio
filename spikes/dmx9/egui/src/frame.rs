@@ -16,15 +16,15 @@ pub fn title_bar(ui: &mut egui::Ui, title: &str) {
         }
         ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, title, egui::FontId::proportional(15.0), ui.visuals().strong_text_color());
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-            let button = |ui: &mut egui::Ui, text: &str| ui.add(egui::Button::new(egui::RichText::new(text).size(16.0)).frame(false).min_size(egui::vec2(32.0, 28.0)));
-            if button(ui, "✕").clicked() {
+            // egui's built-in fonts have no window-control glyphs, so the icons are drawn as lines.
+            if icon_button(ui, Icon::Close).clicked() {
                 ui.send_viewport_cmd(ViewportCommand::Close);
             }
             let max = ui.input(|i| i.viewport().maximized.unwrap_or(false));
-            if button(ui, if max { "🗗" } else { "🗖" }).clicked() {
+            if icon_button(ui, if max { Icon::Restore } else { Icon::Maximize }).clicked() {
                 ui.send_viewport_cmd(ViewportCommand::Maximized(!max));
             }
-            if button(ui, "🗕").clicked() {
+            if icon_button(ui, Icon::Minimize).clicked() {
                 ui.send_viewport_cmd(ViewportCommand::Minimized(true));
             }
         });
@@ -60,4 +60,43 @@ pub fn resize_edges(ui: &mut egui::Ui) {
     if ui.input(|i| i.pointer.primary_pressed()) {
         ui.send_viewport_cmd(ViewportCommand::BeginResize(dir));
     }
+}
+
+#[derive(Clone, Copy)]
+enum Icon {
+    Minimize,
+    Maximize,
+    Restore,
+    Close,
+}
+
+fn icon_button(ui: &mut egui::Ui, icon: Icon) -> egui::Response {
+    let (rect, response) = ui.allocate_exact_size(egui::vec2(40.0, 30.0), Sense::click());
+    let visuals = ui.style().interact(&response);
+    if response.hovered() {
+        let fill = if matches!(icon, Icon::Close) { egui::Color32::from_rgb(196, 43, 28) } else { visuals.bg_fill };
+        ui.painter().rect_filled(rect.shrink(2.0), 4.0, fill);
+    }
+    let c = rect.center();
+    let s = 5.0;
+    let stroke = egui::Stroke::new(1.3, visuals.fg_stroke.color);
+    let p = ui.painter();
+    match icon {
+        Icon::Minimize => {
+            p.line_segment([c + egui::vec2(-s, 0.0), c + egui::vec2(s, 0.0)], stroke);
+        }
+        Icon::Maximize => {
+            p.rect_stroke(egui::Rect::from_center_size(c, egui::vec2(2.0 * s, 2.0 * s)), 1.0, stroke, egui::StrokeKind::Middle);
+        }
+        Icon::Restore => {
+            p.rect_stroke(egui::Rect::from_center_size(c + egui::vec2(-1.5, 1.5), egui::vec2(1.6 * s, 1.6 * s)), 1.0, stroke, egui::StrokeKind::Middle);
+            p.line_segment([c + egui::vec2(-s + 3.0, -s), c + egui::vec2(s, -s)], stroke);
+            p.line_segment([c + egui::vec2(s, -s), c + egui::vec2(s, s - 3.0)], stroke);
+        }
+        Icon::Close => {
+            p.line_segment([c + egui::vec2(-s, -s), c + egui::vec2(s, s)], stroke);
+            p.line_segment([c + egui::vec2(-s, s), c + egui::vec2(s, -s)], stroke);
+        }
+    }
+    response
 }
