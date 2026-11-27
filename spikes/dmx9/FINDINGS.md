@@ -53,7 +53,7 @@ wide margin; the geometry rebuild of all beams costs well under 1 ms per frame n
   `--frame system` runs egui through XWayland for GNOME's own frame (same trade as Avalonia: no
   native Wayland, scaling through XWayland), `--frame custom` draws title bar, buttons and resize
   edges in egui (about 100 lines; the default egui fonts have no window-control glyphs, so the
-  icons are drawn as lines). A one-to-one look across platforms is decided after a Windows run.
+  icons are drawn as lines; they look right, owner 2026-11-27). A one-to-one look across platforms is decided after a Windows run.
 - **Visual check (owner, 2026-11-27):** room, beams and picking correct in all four working
   builds; drag, click and wheel work in both Avalonia builds after the input fixes.
 
