@@ -67,10 +67,34 @@ input, CPU load while capturing, and SoundFlow with miniaudio's JACK backend thr
 
 ## Windows
 
-Open: the same runs with WASAPI loopback of the default output.
+Windows 11 Pro 10.0.26300, WASAPI shared mode, loopback of the default output. .NET 10.0.15
+(self-contained win-x64), Rust 1.100.0 (MSVC). 15 s per run, 30 bursts, all 30 paired in every
+.NET run. Two default outputs: SteelSeries Sonar - Gaming (virtual mixer, 8 ch 96 kHz) and
+Speakers (JBL Quantum 650 Wireless Game, 8 ch 48 kHz, wireless headset).
+
+| Probe, output | Period (frames) | Callback blocks out / in | Tone to onset median | p95 | Max |
+|---|---|---|---|---|---|
+| .NET, Sonar | default | 480 / 480 | 50.1 ms | 51.2 ms | 51.4 ms |
+| .NET, Sonar | 480 | 480 / 480 | 50.3 ms | 51.4 ms | 51.4 ms |
+| .NET, Sonar | 256 | 256 / 256 | 27.8 ms | 30.9 ms | 35.7 ms |
+| .NET, Sonar | 128 | 128 / 128 | 29.0 ms | 30.3 ms | 30.6 ms |
+| .NET, JBL | default | 480 / 480 | 30.0 ms | 30.0 ms | 30.1 ms |
+| .NET, JBL | 480 | 480 / 480 | 30.0 ms | 30.7 ms | 30.7 ms |
+| .NET, JBL | 256 | 256 / 256 | 28.0 ms | 30.7 ms | 30.7 ms |
+| .NET, JBL | 128 | 128 / 128 | 28.7 ms | 30.7 ms | 30.7 ms |
+
+- WASAPI shared mode accepts 256 and 128 frames, but the delay stays at 28 to 30 ms below 480
+  frames: the floor lies in the shared-mode engine, not in the callback size.
+- The Sonar virtual mixer adds about 20 ms at 480 frames.
+- SoundFlow reports the miniaudio backend as `Null` while it uses WASAPI loopback: the same enum
+  shift as `Oss` on Linux.
+- No garbage collection ran.
+- Rust: every run stops before audio starts with `no capture device matches "<name>"`. `find()`
+  accepts a capture device only when `default_input_config()` succeeds, and cpal lists no input
+  config for WASAPI output devices.
 
 ## Open
 
-- Windows results for both probes.
+- Rust on Windows: open the output device as the capture device for loopback.
 - Linux: the pipewire-pulse quantum as the cause of the 21 ms floor (`pw-metadata -n settings`).
 - Analysis cost per block (band levels, onset and BPM) on top of the capture.
