@@ -225,7 +225,14 @@ impl eframe::App for RoomApp {
             let frame = Arc::clone(&self.frame);
             ui.painter().add(egui::PaintCallback {
                 rect,
-                callback: Arc::new(egui_glow::CallbackFn::new(move |_info, painter| {
+                callback: Arc::new(egui_glow::CallbackFn::new(move |info, painter| {
+                    use glow::HasContext as _;
+                    // Keep the clear inside the view, so the labels above it stay.
+                    let clip = info.clip_rect_in_pixels();
+                    unsafe {
+                        painter.gl().enable(glow::SCISSOR_TEST);
+                        painter.gl().scissor(clip.left_px, clip.from_bottom_px, clip.width_px, clip.height_px);
+                    }
                     let f = frame.lock();
                     renderer.lock().paint(painter.gl(), &f.verts, f.opaque, &mvp);
                 })),

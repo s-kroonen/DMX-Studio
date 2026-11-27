@@ -31,11 +31,15 @@ public sealed class App : Application
 
 public sealed class MainView : DockPanel
 {
+    /// The browser head replaces the OpenGL control with a WebGL canvas.
+    public static Func<Action<string>, Action<string>, Control>? ViewFactory { get; set; }
+
     public MainView()
     {
         var stats = new TextBlock { Margin = new Thickness(8, 4) };
         var help = new TextBlock { Margin = new Thickness(8, 0, 8, 4), Text = "drag to orbit, wheel to zoom, click on the floor or a wall to aim the selected fixtures" };
-        var room = new RoomControl(s => stats.Text = s, s => help.Text = s);
+        Action<string> setStats = s => stats.Text = s, setHelp = s => help.Text = s;
+        var room = ViewFactory?.Invoke(setStats, setHelp) ?? new RoomControl(setStats, setHelp);
         SetDock(stats, Dock.Top);
         SetDock(help, Dock.Top);
         Children.Add(stats);
