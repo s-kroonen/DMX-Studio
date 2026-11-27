@@ -57,15 +57,39 @@ wide margin; the geometry rebuild of all beams costs well under 1 ms per frame n
 - **Visual check (owner, 2026-11-27):** room, beams and picking correct in all four working
   builds; drag, click and wheel work in both Avalonia builds after the input fixes.
 
+## Windows
+
+- Windows 11 Pro 10.0.26300 (26H2), NVIDIA GeForce RTX 4060 (driver 32.0.16.1088), monitor
+  1920 × 1080 at 60 Hz; the machine also has an AMD Radeon iGPU and a Parsec virtual display
+  adapter.
+- egui 0.37.0 with glow through the driver's WGL, Rust 1.100.0 (MSVC); Avalonia 12.2.0 through
+  ANGLE (`OpenGLES 3.0` reported), .NET 10.0.15.
+
+| Build | Renders | fps | Frame p99 | Geometry build | GC |
+|---|---|---|---|---|---|
+| egui, system frame | yes | 59.6–60.2 | 16.8–17.8 ms, one window 30.5 ms | 0.03–0.04 ms p99 | — |
+| egui, `--frame custom` | yes | 60.0–60.4, one window 41.9 | 16.8–18.8 ms, two windows about 34 ms | 0.03–0.04 ms p99 | — |
+| Avalonia, system frame | yes | 60.0, 56.7 in the first 5 s | 16.9–17.6 ms | 0.05–0.07 ms p99, 0.43 ms in the first 5 s | gen0 2 in 55 s |
+
+- Both builds start on Windows: egui on WGL, Avalonia on ANGLE (Direct3D underneath). Both are
+  vsync-capped at the 60 Hz monitor (165 Hz on the Linux machine).
+- Avalonia's first 5 s hold one 233 ms frame (start-up). The egui custom-frame run holds one
+  1570 ms frame in the 41.9 fps window (ASSUMPTION: the minimize check; a minimized window pauses
+  rendering).
+- Visual check (owner, 2026-11-27): room, beams and picking correct in both builds; drag orbits,
+  wheel zooms, a click on the floor or a wall aims the gold fixtures. egui and Avalonia with the
+  system frame look like a normal Windows 11 window and snap (screen edge, Win+arrow keys).
+- egui `--frame custom` (owner, 2026-11-27): drag moves, double click maximizes and restores, the
+  three buttons work, resizing from edges and corners works, Windows snapping works. The drawn
+  title bar looks the same as on Linux and not like a Windows 11 title bar; accepted, since the
+  aim is one look on every platform, with custom icons later.
+
 ## Not measured
 
-- Windows: both desktop builds, and the frame modes.
 - Android, multiple windows, docking, text-heavy panels next to the 3D view.
 - Picking fixtures (only surfaces are picked), and the beam look at venue scale.
 - Avalonia browser with AOT, and Chromium-based browsers.
 
 ## Open
 
-- Windows run of both desktop builds (`egui`: `cargo run --release` and `-- --frame custom`;
-  Avalonia: `dotnet run -c Release --project avalonia/Desktop`).
 - Whether a frame drawn in egui is wanted on every platform, or the system frame.
