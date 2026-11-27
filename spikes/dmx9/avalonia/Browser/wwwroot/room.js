@@ -2,7 +2,6 @@
 // in C# (WebRoom.cs) and arrives as a float32 vertex buffer each frame. Throwaway code.
 
 let gl, program, vao, vbo, mvpLoc, canvas, tick;
-let dx = 0, dy = 0, wheel = 0, clickX = -1, clickY = -1;
 
 const vs = `#version 300 es
 layout(location = 0) in vec3 a_pos;
@@ -42,15 +41,7 @@ export function start(c) {
   gl.vertexAttribPointer(1, 4, gl.FLOAT, false, 28, 12);
   gl.bindVertexArray(null);
 
-  // Orbit from the button state of each move: Avalonia's input layer takes some down and up
-  // events, so tracking them gives a drag with the button released.
-  let moved = 0;
-  canvas.addEventListener("pointermove", e => {
-    if (e.buttons & 1) { dx += e.movementX; dy += e.movementY; moved += Math.abs(e.movementX) + Math.abs(e.movementY); }
-  });
-  canvas.addEventListener("pointerdown", () => { moved = 0; });
-  canvas.addEventListener("click", e => { if (moved <= 4) { clickX = e.offsetX; clickY = e.offsetY; } moved = 0; });
-  canvas.addEventListener("wheel", e => { wheel += e.deltaY; e.preventDefault(); }, { passive: false });
+  // Input arrives through Avalonia (WebRoom.cs); the canvas has pointer-events: none.
 
   globalThis.getDotnetRuntime(0).getAssemblyExports("Browser.dll").then(exports => {
     tick = exports.Dmx9.WebRoom.Tick;
@@ -64,9 +55,7 @@ function frame() {
     canvas.width = Math.round(w * s);
     canvas.height = Math.round(h * s);
   }
-  const input = [dx, dy, wheel, clickX, clickY];
-  dx = dy = wheel = 0; clickX = clickY = -1;
-  tick(w, h, ...input);
+  tick(w, h, 0, 0, 0, -1, -1);
   requestAnimationFrame(frame);
 }
 

@@ -13,7 +13,7 @@ internal static class Program
         Trace.Listeners.Add(new ConsoleTraceListener());
         // "?glcontrol" keeps OpenGlControlBase, to show what it does in the browser.
         if (!(args.Length > 0 && args[0].Contains("glcontrol")))
-            Dmx9.MainView.ViewFactory = (stats, help) => new Dmx9.WebRoom(stats, help);
+            Dmx9.MainView.ViewFactory = (stats, help) => new Dmx9.WebRoom(stats, help).InInputHost();
         return AppBuilder.Configure<Dmx9.App>().WithInterFont().LogToTrace(LogEventLevel.Warning).StartBrowserAppAsync("out");
     }
 }

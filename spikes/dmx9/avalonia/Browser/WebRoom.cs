@@ -25,6 +25,35 @@ public sealed partial class WebRoom : NativeControlHost
     private double _lastFrame, _windowStart, _logStart;
     private readonly List<double> _frameMs = new(), _buildMs = new(), _logFrames = new(), _logBuild = new();
 
+    // Avalonia's input layer captures the pointer, so input is handled here, as on the desktop.
+    private double _dx, _dy, _wheel, _clickX = -1, _clickY = -1;
+    private Avalonia.Point _down, _last;
+    private bool _dragging;
+
+    public Avalonia.Controls.Panel InInputHost()
+    {
+        var host = new Avalonia.Controls.Panel { Background = Avalonia.Media.Brushes.Transparent };
+        host.Children.Add(this);
+        host.PointerPressed += (s, e) => { _down = _last = e.GetPosition(this); _dragging = true; e.Pointer.Capture(host); };
+        host.PointerMoved += (s, e) =>
+        {
+            if (!_dragging) return;
+            var p = e.GetPosition(this);
+            _dx += p.X - _last.X;
+            _dy += p.Y - _last.Y;
+            _last = p;
+        };
+        host.PointerReleased += (s, e) =>
+        {
+            _dragging = false;
+            e.Pointer.Capture(null);
+            var p = e.GetPosition(this);
+            if (Math.Abs(p.X - _down.X) + Math.Abs(p.Y - _down.Y) <= 4) { _clickX = p.X; _clickY = p.Y; }
+        };
+        host.PointerWheelChanged += (s, e) => _wheel -= e.Delta.Y * 100;
+        return host;
+    }
+
     public WebRoom(Action<string> stats, Action<string> help)
     {
         _stats = stats;
@@ -35,7 +64,7 @@ public sealed partial class WebRoom : NativeControlHost
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
         var canvas = Interop.CreateElement("canvas");
-        canvas.SetProperty("style", "width:100%;height:100%;display:block");
+        canvas.SetProperty("style", "width:100%;height:100%;display:block;pointer-events:none");
         Start(canvas);
         return new JSObjectControlHandle(canvas);
     }
@@ -52,7 +81,9 @@ public sealed partial class WebRoom : NativeControlHost
     {
         var self = _current;
         if (self == null) return;
-        self.Frame(width, height, dx, dy, wheel, clickX, clickY);
+        self.Frame(width, height, self._dx, self._dy, self._wheel, self._clickX, self._clickY);
+        self._dx = self._dy = self._wheel = 0;
+        self._clickX = self._clickY = -1;
     }
 
     private void Frame(double width, double height, double dx, double dy, double wheel, double clickX, double clickY)
