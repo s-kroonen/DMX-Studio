@@ -82,6 +82,10 @@ Speakers (JBL Quantum 650 Wireless Game, 8 ch 48 kHz, wireless headset).
 | .NET, JBL | 480 | 480 / 480 | 30.0 ms | 30.7 ms | 30.7 ms |
 | .NET, JBL | 256 | 256 / 256 | 28.0 ms | 30.7 ms | 30.7 ms |
 | .NET, JBL | 128 | 128 / 128 | 28.7 ms | 30.7 ms | 30.7 ms |
+| Rust, JBL | default | 480 / 480 | 22.0 ms | 22.7 ms | 22.7 ms |
+| Rust, JBL | 480 | 480 / 480 | 22.0 ms | 22.7 ms | 22.7 ms |
+| Rust, JBL | 256 | 480 / 480 | 22.0 ms | 22.0 ms | 22.0 ms |
+| Rust, JBL | 128 | 480 / 480 | 22.0 ms | 22.7 ms | 22.7 ms |
 
 - WASAPI shared mode accepts 256 and 128 frames, but the delay stays at 28 to 30 ms below 480
   frames: the floor lies in the shared-mode engine, not in the callback size.
@@ -89,12 +93,18 @@ Speakers (JBL Quantum 650 Wireless Game, 8 ch 48 kHz, wireless headset).
 - SoundFlow reports the miniaudio backend as `Null` while it uses WASAPI loopback: the same enum
   shift as `Oss` on Linux.
 - No garbage collection ran.
-- Rust: every run stops before audio starts with `no capture device matches "<name>"`. `find()`
-  accepts a capture device only when `default_input_config()` succeeds, and cpal lists no input
-  config for WASAPI output devices.
+- Rust: cpal lists no input config for WASAPI output devices, so the capture lookup falls back to
+  the matching output device; cpal opens it in loopback mode (`AUDCLNT_STREAMFLAGS_LOOPBACK`).
+  Rust on JBL only; Sonar not measured with Rust.
+- Rust keeps a 480-frame callback (10 ms, the device period) whatever buffer is requested: cpal's
+  shared mode uses the requested size for the ring buffer only. Still 8 ms below .NET on the same
+  device.
+- Every Rust run reports one `capture error: A buffer underrun or overrun occurred.` and pairs 29
+  of 30 bursts; the first output block is 1056 frames, the start-up fill.
 
 ## Open
 
-- Rust on Windows: open the output device as the capture device for loopback.
+- Rust on Windows: the source of the one capture overrun per run (start-up or steady state).
+- Rust and .NET: WASAPI exclusive mode or `IAudioClient3` low-latency periods below 10 ms.
 - Linux: the pipewire-pulse quantum as the cause of the 21 ms floor (`pw-metadata -n settings`).
 - Analysis cost per block (band levels, onset and BPM) on top of the capture.

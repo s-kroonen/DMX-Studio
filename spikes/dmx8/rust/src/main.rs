@@ -41,17 +41,20 @@ fn list(host: &Host) {
     }
 }
 
+/// Capture falls back to a matching output device: on WASAPI, cpal opens an output device as input
+/// in loopback mode. Output devices there list no input config.
 fn find(host: &Host, part: &str, input: bool) -> Device {
     if part == "default" {
         return if input { host.default_input_device() } else { host.default_output_device() }.expect("default device");
     }
-    host.devices()
-        .expect("devices")
-        .find(|d| {
+    let matches = |want_input: bool| {
+        host.devices().expect("devices").find(|d| {
             name(d).to_lowercase().contains(&part.to_lowercase())
-                && if input { d.default_input_config().is_ok() } else { d.default_output_config().is_ok() }
+                && if want_input { d.default_input_config().is_ok() } else { d.default_output_config().is_ok() }
         })
-        .unwrap_or_else(|| panic!("no {} device matches {part:?}", if input { "capture" } else { "output" }))
+    };
+    let found = if input { matches(true).or_else(|| matches(false)) } else { matches(false) };
+    found.unwrap_or_else(|| panic!("no {} device matches {part:?}", if input { "capture" } else { "output" }))
 }
 
 fn stats(label: &str, unit: &str, mut v: Vec<f64>) {
@@ -69,7 +72,7 @@ fn latency(host: &Host, out_part: &str, in_part: &str, seconds: f64, frames: Opt
     let out_dev = find(host, out_part, false);
     let in_dev = find(host, in_part, true);
     let out_cfg = out_dev.default_output_config().expect("output config");
-    let in_cfg = in_dev.default_input_config().expect("input config");
+    let in_cfg = in_dev.default_input_config().or_else(|_| in_dev.default_output_config()).expect("input config");
     let buffer_size = frames.map(BufferSize::Fixed).unwrap_or(BufferSize::Default);
     let out_conf = StreamConfig { channels: out_cfg.channels(), sample_rate: out_cfg.sample_rate(), buffer_size };
     let in_conf = StreamConfig { channels: in_cfg.channels(), sample_rate: in_cfg.sample_rate(), buffer_size };
